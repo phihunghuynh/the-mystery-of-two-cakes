@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171326">
+  <title>The Mystery of Two Cakes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="./"><span class="brand-mark">✦</span> THE MYSTERY OF TWO CAKES</a>
+      <span class="top-tag">A SECRET JOURNEY</span>
+    </header>
+
+    <section id="intro" class="panel hero">
+      <div class="eyebrow">CONFIDENTIAL QUEST · NO. 02</div>
+      <div class="orb">✧</div>
+      <h1>The Mystery<br><em>of Two Cakes</em></h1>
+      <p class="lead">Một nhiệm vụ nhỏ đang chờ bạn. Năm cánh cửa, vài lựa chọn thú vị và một bí mật ở cuối hành trình.</p>
+      <div class="divider"></div>
+      <label class="field-label" for="inviteCode">Mã mở cửa</label>
+      <input id="inviteCode" class="text-input" type="password" autocomplete="off" placeholder="Nhập mã được gửi riêng cho bạn">
+      <p id="introError" class="error" aria-live="polite"></p>
+      <button id="startBtn" class="button primary">Mở cánh cửa đầu tiên <span>→</span></button>
+      <p class="fine">Không có câu trả lời đúng hay sai. Bạn có thể bỏ qua câu hỏi không muốn trả lời.</p>
+    </section>
+
+    <section id="quiz" class="panel hidden">
+      <div class="quiz-head">
+        <div><div class="eyebrow" id="chapterLabel">CHAPTER 01</div><h2 id="chapterTitle">Mood Detector</h2></div>
+        <div class="progress-count" id="progressCount">01 / 06</div>
+      </div>
+      <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      <div id="questionArea"></div>
+      <div class="quiz-actions">
+        <button id="backBtn" class="button ghost">← Quay lại</button>
+        <button id="nextBtn" class="button primary">Tiếp tục →</button>
+      </div>
+      <p class="fine center">Hãy chọn theo cảm nhận đầu tiên. Không cần suy nghĩ quá lâu.</p>
+    </section>
+
+    <section id="finish" class="panel hero hidden">
+      <div class="eyebrow">QUEST COMPLETED</div>
+      <div class="orb">✧</div>
+      <h1>The final<br><em>mystery awaits.</em></h1>
+      <p class="lead">Bạn đã mở khóa thông điệp cuối cùng. Có hai điều bất ngờ đang được chuẩn bị.</p>
+      <div class="sealed-card"><span>✦</span><div><b>TWO HIDDEN TREASURES</b><small>Contents classified until the right moment.</small></div><span>✦</span></div>
+      <p id="finishMessage" class="fine">Cảm ơn bạn đã tham gia chuyến phiêu lưu nhỏ này.</p>
+    </section>
+
+    <footer>MADE OF LITTLE MYSTERIES <span>✦</span></footer>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

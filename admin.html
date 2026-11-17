@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171326">
+  <title>Admin · The Mystery of Two Cakes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell admin-shell">
+    <header class="topbar">
+      <a class="brand" href="./"><span class="brand-mark">✦</span> THE MYSTERY OF TWO CAKES</a>
+      <span class="top-tag">PRIVATE CONTROL ROOM</span>
+    </header>
+    <section id="adminLogin" class="panel hero">
+      <div class="eyebrow">AUTHORIZED PERSONNEL ONLY</div>
+      <h1>Control<br><em>room.</em></h1>
+      <p class="lead">Khu vực dành riêng cho người tạo khảo sát.</p>
+      <label class="field-label" for="adminCode">Mã quản trị</label>
+      <input id="adminCode" class="text-input" type="password" placeholder="Nhập mã quản trị">
+      <p id="adminError" class="error"></p>
+      <button id="adminLoginBtn" class="button primary">Truy cập dashboard →</button>
+      <p class="fine">Mã quản trị được xác thực ở Google Apps Script, không lưu trong trình duyệt.</p>
+    </section>
+    <section id="dashboard" class="hidden">
+      <div class="dashboard-heading"><div><div class="eyebrow">PRIVATE ANALYTICS</div><h1>Mission <em>report.</em></h1></div><button id="refreshBtn" class="button ghost">↻ Làm mới</button></div>
+      <div id="connectionNotice" class="notice"></div>
+      <div class="stats-grid">
+        <article class="stat-card"><small>LƯỢT HOÀN THÀNH</small><strong id="totalCount">0</strong></article>
+        <article class="stat-card"><small>TRẠNG THÁI GẦN NHẤT</small><strong id="latestMood">—</strong></article>
+        <article class="stat-card"><small>NGUỒN DỮ LIỆU</small><strong id="sourceLabel">—</strong></article>
+      </div>
+      <section class="panel admin-panel">
+        <div class="section-heading"><div><div class="eyebrow">LATEST SUBMISSION</div><h2>Kết quả mới nhất</h2></div></div>
+        <div id="latestResult" class="empty-state">Chưa có dữ liệu.</div>
+      </section>
+      <section class="panel admin-panel">
+        <div class="section-heading"><div><div class="eyebrow">TASTE PROFILE</div><h2>Điểm mô phỏng của 9 loại bánh</h2></div></div>
+        <div id="scoreBars" class="score-list"></div>
+      </section>
+      <section class="panel admin-panel">
+        <div class="section-heading"><div><div class="eyebrow">SUBMISSION LOG</div><h2>Lịch sử tham gia</h2></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Thời gian</th><th>Tâm trạng</th><th>Độ tin cậy</th><th>Cặp đề xuất</th><th>Cửa hàng</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+      </section>
+    </section>
+    <footer>PRIVATE CONTROL ROOM <span>✦</span></footer>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
