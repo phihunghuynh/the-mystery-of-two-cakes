@@ -1,4 +1,4 @@
-(() => {
+(() => { 
   const $=id=>document.getElementById(id);
   const CONFIG=window.MYSTERY_CONFIG||{mode:"demo",gasUrl:""};
   let adminCode="";
