@@ -6,21 +6,38 @@
   function show(id){sections.forEach(s=>$(s).classList.toggle("hidden",s!==id));}
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 
-  $("startBtn").addEventListener("click",()=>{
+  $("startBtn").addEventListener("click",async()=>{
+    const button=$("startBtn");
     const code=$("inviteCode").value.trim();
+    $("introError").textContent="";
     if(!code){$("introError").textContent="Bạn cần nhập mã mở cửa.";return;}
-    state.invite=code; state.mood=null; state.answers={}; state.index=0;
-    state.questions=[{
-      id:"MOOD",title:"Hôm nay, bạn muốn bước vào nhiệm vụ với trạng thái nào?",
-      options:[
-        {label:"☀️ Đầu óc đang rất tỉnh táo, sẵn sàng khám phá",value:"happy"},
-        {label:"🌤 Một ngày bình thường, không quá đặc biệt",value:"normal"},
-        {label:"🌧 Muốn tìm một chút gì đó nhẹ nhàng",value:"sad"},
-        {label:"🌙 Não đang xin nghỉ phép, xin đừng làm phiền",value:"tired"},
-        {label:"🎲 Không biết nữa, cứ để bất ngờ quyết định",value:"random"}
-      ]
-    }];
-    show("quiz"); render();
+
+    button.disabled=true;
+    button.textContent="Đang kiểm tra chìa khóa…";
+    try{
+      if(CONFIG.mode==="gas") await validateInviteRemote(code);
+      else if(CONFIG.mode!=="demo") throw new Error("Chế độ website chưa được cấu hình. Hãy kiểm tra config.js.");
+
+      state.invite=code; state.mood=null; state.answers={}; state.index=0;
+      state.safety=null; state.safetyNote="";
+      state.questions=[{
+        id:"MOOD",title:"Hôm nay, bạn muốn bước vào nhiệm vụ với trạng thái nào?",
+        options:[
+          {label:"☀️ Đầu óc đang rất tỉnh táo, sẵn sàng khám phá",value:"happy"},
+          {label:"🌤 Một ngày bình thường, không quá đặc biệt",value:"normal"},
+          {label:"🌧 Muốn tìm một chút gì đó nhẹ nhàng",value:"sad"},
+          {label:"🌙 Não đang xin nghỉ phép, xin đừng làm phiền",value:"tired"},
+          {label:"🎲 Không biết nữa, cứ để bất ngờ quyết định",value:"random"}
+        ]
+      }];
+      show("quiz"); render();
+    }catch(err){
+      const message=err.message==="INVALID_INVITE"?"Mã mở cửa chưa chính xác. Bạn kiểm tra lại nhé.":err.message;
+      $("introError").textContent=message||"Chưa thể mở cửa. Vui lòng thử lại.";
+    }finally{
+      button.disabled=false;
+      button.innerHTML='Mở cánh cửa đầu tiên <span>→</span>';
+    }
   });
 
   function render(){
@@ -122,18 +139,22 @@
     return candidates[0]||null;
   }
 
-  async function submitRemote(payload){
+  async function validateInviteRemote(inviteCode){
+    await postRemote({action:"validateInvite",inviteCode});
+  }
+
+  async function postRemote(payload){
     const endpoint=CONFIG.gasUrl;
-    if(!endpoint)throw new Error("Chưa cấu hình Google Apps Script URL.");
+    if(!endpoint)throw new Error("Chưa cấu hình Google Apps Script URL trong config.js.");
     if(!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec\/?$/.test(endpoint))
       throw new Error("Apps Script URL chưa đúng định dạng /exec.");
 
     const requestId=(crypto.randomUUID?.()||(`${Date.now()}-${Math.random().toString(36).slice(2)}`));
     payload.requestId=requestId;
     return await new Promise((resolve,reject)=>{
-      const frameName=`mystery_submit_${requestId.replace(/[^a-zA-Z0-9_]/g,"_")}`;
+      const frameName=`mystery_request_${requestId.replace(/[^a-zA-Z0-9_]/g,"_")}`;
       const iframe=document.createElement("iframe");
-      iframe.name=frameName; iframe.title="Submission acknowledgement";
+      iframe.name=frameName; iframe.title="Server acknowledgement";
       iframe.style.display="none";
       const form=document.createElement("form");
       form.method="POST"; form.action=endpoint; form.target=frameName;
@@ -150,12 +171,16 @@
         const data=event.data;
         if(!data||data.type!=="MYSTERY_SUBMIT_RESULT"||data.requestId!==requestId)return;
         if(data.ok)finish(null,true);
-        else finish(new Error(data.message||"Máy chủ từ chối dữ liệu."));
+        else finish(new Error(data.message||"Máy chủ từ chối yêu cầu."));
       };
-      const timer=setTimeout(()=>finish(new Error("Hết thời gian chờ phản hồi từ Google Sheets. Hãy kiểm tra kết nối hoặc thử lại.")),20000);
+      const timer=setTimeout(()=>finish(new Error("Hết thời gian chờ Google Apps Script. Kiểm tra URL /exec và quyền truy cập Web App.")),20000);
       window.addEventListener("message",onMessage);
       form.submit();
     });
+  }
+
+  async function submitRemote(payload){
+    await postRemote(payload);
   }
 
   async function finish(){
